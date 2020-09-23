@@ -36,7 +36,28 @@ const router = (app) =>{
             products.push(req.body);
             saveProduct(products);
 
-            res.status(201).send("Cadastrado com sucesso");
+            res.status(201).send("Cadastrado realizado com sucesso!");
+        })
+        .put((req, res)=>{
+            const products = getProducts();
+
+            saveProduct(products.map(products=>{
+                if (products.id === req.params.id){
+                    return{
+                        ...products,
+                        ...req.body
+                    }
+                }
+                return products
+            }));
+            res.status(200).send("Cadastro atualizado com sucesso!");
+        })
+        .delete((req, res)=>{
+            const products = getProducts();
+
+            saveProduct(products.filter(products=> products.id !== req.params.id));
+
+            res.status(200).send("Cadastro excluído com sucesso!");
         })
 }
 
