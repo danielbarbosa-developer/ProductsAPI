@@ -2,5 +2,9 @@
 	{
 		"id": "1",
 		"product": "mesa"
+	},
+	{
+		"id": "1",
+		"product": "cadeira"
 	}
 ]

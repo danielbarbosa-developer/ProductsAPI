@@ -1,6 +1,6 @@
 //Definição das rotas da API
-const express = require('express');
-const router = express.Router();
+//const express = require('express');
+//const router = express.Router();
 
 //Definindo um arquivo JSON como banco de dados de exemplo
 const fs = require('fs');
@@ -23,21 +23,22 @@ const getProducts = () =>{
 
 const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));
 
+const router = (app) =>{
+    app.route('/products/:id?')
+        .get((req, res) =>{
+            const products = getProducts();
 
-router.route('/products/:id?')
-.get((req, res) =>{
-    const products = getProducts();
+            res.status(200).send({products});
+        })
+        .post((req, res)=>{
+            const products = getProducts();
 
-    res.status(200).send({products});
-})
-.post((req, res) =>{
-    const products = getProducts();
+            products.push(req.body);
+            saveProduct(products);
 
-    products.push(req.body);
-    saveProduct(products);
-
-    res.status(201).send('Salvo com sucesso!')
-});
+            res.status(201).send("Cadastrado com sucesso");
+        })
+}
 
 
 
