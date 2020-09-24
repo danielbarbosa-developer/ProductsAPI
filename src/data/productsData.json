@@ -2,5 +2,13 @@
 	{
 		"id": "1",
 		"product": "Mesa"
+	},
+	{
+		"id": "2",
+		"product": "Cadeira"
+	},
+	{
+		"id": "3",
+		"product": "Televisão"
 	}
 ]

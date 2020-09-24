@@ -1,6 +1,5 @@
 //Definição das rotas da API
-//const express = require('express');
-//const router = express.Router();
+
 
 //Definindo um arquivo JSON como banco de dados de exemplo
 const fs = require('fs');
@@ -23,46 +22,57 @@ const getProducts = () =>{
 
 const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));
 
-const router = (app) =>{
-    app.route('/products/:id?')
-        .get((req, res) =>{
-            const products = getProducts();
+// métodos HTTP para CRUD
+const router = (app)=>{
+    
+    app.get('/products/', (req, res)=>{
+        const products = getProducts();
+        res.status(200).send({products});
+    });
 
-            res.status(200).send({products});
-        })
-        .post((req, res)=>{
-            const products = getProducts();
-
+    app.post('/products/cadastro', (req, res)=>{
+        const products = getProducts();
+        const getIds = products.map((products)=>{
+            return products.id;
+        });
+       
+        if(!getIds.includes(req.body.id)){
+            
             products.push(req.body);
             saveProduct(products);
+            res.status(201).send("CREATED");
+        }
+        else{
+            res.status(400).send("BAD_REQUEST");
+        }
+    });
 
-            res.status(201).send("Cadastrado realizado com sucesso!");
-        })
-        .put((req, res)=>{
-            const products = getProducts();
+    app.put('/products/cadastro/:id?', (req, res)=>{
+        const products = getProducts();
 
-            saveProduct(products.map(products=>{
-                if (products.id === req.params.id){
-                    return{
-                        ...products,
-                        ...req.body
-                    }
+        saveProduct(products.map(products=>{
+            if (products.id === req.params.id){
+                return{
+                    ...products,
+                    ...req.body
                 }
-                return products
-            }));
-            res.status(200).send("Cadastro atualizado com sucesso!");
-        })
-        .delete((req, res)=>{
-            const products = getProducts();
+            }
+            return products
+        }));
+        res.status(200).send("OK");
 
-            saveProduct(products.filter(products=> products.id !== req.params.id));
+    });
 
-            res.status(200).send("Cadastro excluído com sucesso!");
-        })
+    app.delete('/products/cadastro/:id?', (req, res)=>{
+        const products = getProducts();
+
+        saveProduct(products.filter(products=> products.id !== req.params.id));
+
+        res.status(200).send("OK");
+
+    });
+
+ 
 }
 
-
-
 module.exports = router;
-
-
