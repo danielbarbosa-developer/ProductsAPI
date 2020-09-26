@@ -1,11 +1,9 @@
-//Definição das rotas da API
-
-
 //Definindo um arquivo JSON como banco de dados de exemplo
 const fs = require('fs');
 const { join } = require('path');
 
 const filePath = join(__dirname, '../data/productsData.json');
+
 
 const getProducts = () =>{
     const data = fs.existsSync(filePath)
@@ -20,9 +18,35 @@ const getProducts = () =>{
     }
 }
 
+
 const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));
 
-// métodos HTTP para CRUD
+
+const toMiliSeconds = (minutes) =>{
+    return minutes*60*1000;// converte minutos em milisegundos
+}
+
+function timmer(sameProduct, minutes){
+    const filterTime = sameProduct.map((times)=>{
+        return times.time;
+    });// filtrando os times das requisições anteriores
+
+    const timmer = filterTime.filter(time => time > Date.now() - toMiliSeconds(minutes) )
+    console.log(timmer);
+    var test = timmer * 1;
+    console.log(test)
+    if(timmer*1 !== 0){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+
+
+
+// //Definição das rotas da API e métodos HTTP
 const router = (app)=>{
     
     app.get('/products/', (req, res)=>{
@@ -30,24 +54,51 @@ const router = (app)=>{
         res.status(200).send({products});
     });
 
-    app.post('/products/cadastro', (req, res)=>{
+    app.delete('/products/cadastro/:id?', (req, res)=>{
+        const products = getProducts();
+
+        saveProduct(products.filter(products=> products.id !== req.params.id));
+
+        res.status(200).send("OK");
+
+    });
+
+    
+    
+    app.post('/products/cadastro',(req, res)=>{
         const products = getProducts();
         const getIds = products.map((products)=>{
             return products.id;
         });
-       
-        if(!getIds.includes(req.body.id)){
+        const getProduct = products.map((products)=>{
+            return products.product;
+        });
+        const sameProduct = products.filter(products=> products.id === req.body.id && products.product === req.body.product);
+        console.log(sameProduct);
+    
+        //Negando requisições com o mesmo conteúdo dentro de 10 minutos
+        if( getIds.includes(req.body.id) && getProduct.includes(req.body.product)){
             
-            products.push(req.body);
-            saveProduct(products);
-            res.status(201).send("CREATED");
+            if(timmer(sameProduct, 10) === false){
+                products.push({id: req.body.id, product: req.body.product, time: Date.now()});
+                saveProduct(products);
+    
+                res.status(201).send("CREATED");
+            }
+            else{
+                res.status(400).send("BAD_REQUEST");
+            }
+            
         }
         else{
-            res.status(400).send("BAD_REQUEST");
-        }
-    });
+            products.push({id: req.body.id, product: req.body.product, time: Date.now()});
+            saveProduct(products);
 
-    app.put('/products/cadastro/:id?', (req, res)=>{
+            res.status(201).send("CREATED");
+        }
+    })
+
+    app.put('/products/cadastro/:id?',(req, res)=>{
         const products = getProducts();
 
         saveProduct(products.map(products=>{
@@ -63,16 +114,6 @@ const router = (app)=>{
 
     });
 
-    app.delete('/products/cadastro/:id?', (req, res)=>{
-        const products = getProducts();
-
-        saveProduct(products.filter(products=> products.id !== req.params.id));
-
-        res.status(200).send("OK");
-
-    });
-
- 
 }
 
 module.exports = router;
