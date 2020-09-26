@@ -1,8 +1,9 @@
 const TimeControl = require ("../controller/time-control.js");
+const ProductsRepository = require("../Repository/products-repository.js");
 
 
 //Definindo um arquivo JSON como banco de dados de exemplo
-const fs = require('fs');
+/*const fs = require('fs');
 const { join } = require('path');
 
 const filePath = join(__dirname, '../data/productsData.json');
@@ -22,9 +23,10 @@ const getProducts = () =>{
 }
 
 
-const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));
+const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));*/
 
 const timeControl = new TimeControl();
+const productsRepository = new ProductsRepository();
 
 
 
@@ -32,14 +34,14 @@ const timeControl = new TimeControl();
 const router = (app)=>{
     
     app.get('/products/', (req, res)=>{
-        const products = getProducts();
+        const products = productsRepository.getProducts();
         res.status(200).send({products});
     });
 
     app.delete('/products/cadastro/:id?', (req, res)=>{
-        const products = getProducts();
+        const products = productsRepository.getProducts();
 
-        saveProduct(products.filter(products=> products.id !== req.params.id));
+        productsRepository.saveProduct(products.filter(products=> products.id !== req.params.id));
 
         res.status(200).send("OK");
 
@@ -48,22 +50,23 @@ const router = (app)=>{
     
     
     app.post('/products/cadastro',(req, res)=>{
-        const products = getProducts();
+        const products = productsRepository.getProducts();
         const getIds = products.map((products)=>{
             return products.id;
         });
         const getProduct = products.map((products)=>{
             return products.product;
         });
-        const sameProduct = products.filter(products=> products.id === req.body.id && products.product === req.body.product);
-        console.log(sameProduct);
+       
     
         //Negando requisições com o mesmo conteúdo dentro de 10 minutos
         if( getIds.includes(req.body.id) && getProduct.includes(req.body.product)){
+
+            const sameProduct = products.filter(products=> products.id === req.body.id && products.product === req.body.product);
             
             if(timeControl.timmer(sameProduct, 10) === false){
                 products.push({id: req.body.id, product: req.body.product, time: Date.now()});
-                saveProduct(products);
+                productsRepository.saveProduct(products);
     
                 res.status(201).send("CREATED");
             }
@@ -74,16 +77,16 @@ const router = (app)=>{
         }
         else{
             products.push({id: req.body.id, product: req.body.product, time: Date.now()});
-            saveProduct(products);
+            productsRepository.saveProduct(products);
 
             res.status(201).send("CREATED");
         }
     })
 
     app.put('/products/cadastro/:id?',(req, res)=>{
-        const products = getProducts();
+        const products = productsRepository.getProducts();
 
-        saveProduct(products.map(products=>{
+        productsRepository.saveProduct(products.map(products=>{
             if (products.id === req.params.id){
                 return{
                     ...products,

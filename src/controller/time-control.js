@@ -5,14 +5,13 @@ class TimeControl{
     }
     
     timmer(sameProduct, minutes){
+        // sameProduct é um array de todos os produtos semelhantes à requisição
         const filterTime = sameProduct.map((times)=>{
             return times.time;
-        });// filtrando os tempos das requisições anteriores
+        });// mapeando apenas os tempos das requisições anteriores
     
-        const timmer = filterTime.filter(time => time > Date.now() - this.toMiliSeconds(minutes) )
-        console.log(timmer);
-        var test = timmer * 1;
-        console.log(test)
+        const timmer = filterTime.filter(time => time > Date.now() - this.toMiliSeconds(minutes))
+        
         if(timmer*1 !== 0){
             return true;
         }
