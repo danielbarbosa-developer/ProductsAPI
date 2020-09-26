@@ -1,3 +1,6 @@
+const TimeControl = require ("../controller/time-control.js");
+
+
 //Definindo um arquivo JSON como banco de dados de exemplo
 const fs = require('fs');
 const { join } = require('path');
@@ -21,28 +24,7 @@ const getProducts = () =>{
 
 const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));
 
-
-const toMiliSeconds = (minutes) =>{
-    return minutes*60*1000;// converte minutos em milisegundos
-}
-
-function timmer(sameProduct, minutes){
-    const filterTime = sameProduct.map((times)=>{
-        return times.time;
-    });// filtrando os times das requisições anteriores
-
-    const timmer = filterTime.filter(time => time > Date.now() - toMiliSeconds(minutes) )
-    console.log(timmer);
-    var test = timmer * 1;
-    console.log(test)
-    if(timmer*1 !== 0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
+const timeControl = new TimeControl();
 
 
 
@@ -79,7 +61,7 @@ const router = (app)=>{
         //Negando requisições com o mesmo conteúdo dentro de 10 minutos
         if( getIds.includes(req.body.id) && getProduct.includes(req.body.product)){
             
-            if(timmer(sameProduct, 10) === false){
+            if(timeControl.timmer(sameProduct, 10) === false){
                 products.push({id: req.body.id, product: req.body.product, time: Date.now()});
                 saveProduct(products);
     
