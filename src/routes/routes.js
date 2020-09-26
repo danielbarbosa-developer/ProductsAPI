@@ -1,34 +1,8 @@
 const TimeControl = require ("../controller/time-control.js");
 const ProductsRepository = require("../Repository/products-repository.js");
 
-
-//Definindo um arquivo JSON como banco de dados de exemplo
-/*const fs = require('fs');
-const { join } = require('path');
-
-const filePath = join(__dirname, '../data/productsData.json');
-
-
-const getProducts = () =>{
-    const data = fs.existsSync(filePath)
-        ? fs.readFileSync(filePath)
-        : []
-
-    try{
-        return JSON.parse(data);
-    }
-    catch (error){
-        return []
-    }
-}
-
-
-const saveProduct = (products) => fs.writeFileSync(filePath, JSON.stringify(products, null, '\t'));*/
-
 const timeControl = new TimeControl();
 const productsRepository = new ProductsRepository();
-
-
 
 // //Definição das rotas da API e métodos HTTP
 const router = (app)=>{
@@ -38,7 +12,7 @@ const router = (app)=>{
         res.status(200).send({products});
     });
 
-    app.delete('/products/cadastro/:id?', (req, res)=>{
+    app.delete('/products/:id?', (req, res)=>{
         const products = productsRepository.getProducts();
 
         productsRepository.saveProduct(products.filter(products=> products.id !== req.params.id));
@@ -49,7 +23,7 @@ const router = (app)=>{
 
     
     
-    app.post('/products/cadastro',(req, res)=>{
+    app.post('/products/',(req, res)=>{
         const products = productsRepository.getProducts();
         const getIds = products.map((products)=>{
             return products.id;
@@ -63,7 +37,7 @@ const router = (app)=>{
         if( getIds.includes(req.body.id) && getProduct.includes(req.body.product)){
 
             const sameProduct = products.filter(products=> products.id === req.body.id && products.product === req.body.product);
-            
+
             if(timeControl.timmer(sameProduct, 10) === false){
                 products.push({id: req.body.id, product: req.body.product, time: Date.now()});
                 productsRepository.saveProduct(products);
@@ -83,7 +57,7 @@ const router = (app)=>{
         }
     })
 
-    app.put('/products/cadastro/:id?',(req, res)=>{
+    app.put('/products/:id?',(req, res)=>{
         const products = productsRepository.getProducts();
 
         productsRepository.saveProduct(products.map(products=>{
