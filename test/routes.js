@@ -11,17 +11,23 @@ describe('routes', function(){
 
     var urlProduct = "/products";
 
-    var newProduct = {
-        id: 123,
-        product: 'Mesa'
-    };
+    var newProducts = [
+        {
+            "id": "123",
+            "name": "Caneta"
+        }, 
+        {
+            "id": "14",
+            "name": "Teclado"
+        }
+    ];
 
     it('Add new product', function(done){
 
         chai.request(server)
             .post(urlProduct)
             .set('content-type', 'application/json')
-            .send(newProduct)
+            .send(newProducts)
             .end(function(err, res){
 
                 res.should.have.status(201);
@@ -29,15 +35,16 @@ describe('routes', function(){
             });
 
     });
+
    it('Add the same product before 10mins', function(done){
 
         chai.request(server)
             .post(urlProduct)
             .set('content-type', 'application/json')
-            .send(newProduct)
+            .send(newProducts)
             .end(function(err, res){
 
-                res.should.have.status(400);
+                res.should.have.status(404);
                 done();
             });
     });
@@ -55,6 +62,7 @@ describe('routes', function(){
             });
         
     });
+
 
 })
 

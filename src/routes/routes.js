@@ -1,3 +1,4 @@
+const md5 = require("md5");
 const TimeControl = require ("../controller/time-control.js");
 const ProductsRepository = require("../Repository/products-repository.js");
 
@@ -24,36 +25,18 @@ const router = (app)=>{
     
     
     app.post('/products/',(req, res)=>{
+        var hashArray = md5(JSON.stringify(req.body).toLowerCase());
         const products = productsRepository.getProducts();
-        const getIds = products.map((products)=>{
-            return products.id;
-        });
-        const getProduct = products.map((products)=>{
-            return products.product;
-        });
-       
-    
-        //Negando requisições com o mesmo conteúdo dentro de 10 minutos
-        if( getIds.includes(req.body.id) && getProduct.includes(req.body.product)){
+        const sameProducts = products.filter(requisicao=> requisicao.hash === hashArray);
 
-            const sameProduct = products.filter(products=> products.id === req.body.id && products.product === req.body.product);
-
-            if(timeControl.timmer(sameProduct, 10) === false){
-                products.push({id: req.body.id, product: req.body.product, time: Date.now()});
-                productsRepository.saveProduct(products);
-    
-                res.status(201).send("CREATED");
-            }
-            else{
-                res.status(400).send("BAD_REQUEST");
-            }
-            
+        if(timeControl.timmer(sameProducts, 10) === false){
+            var requisicao = {"hash": hashArray, "time": Date.now(), "products": req.body}
+            products.push(requisicao);
+            productsRepository.saveProduct(products);
+            res.status(201).send("CREATED");
         }
         else{
-            products.push({id: req.body.id, product: req.body.product, time: Date.now()});
-            productsRepository.saveProduct(products);
-
-            res.status(201).send("CREATED");
+            res.status(404).send("METHOD_NOT_ALLOWED");
         }
     })
 

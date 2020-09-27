@@ -1,12 +1,30 @@
 [
 	{
-		"id": "9",
-		"product": "Tablet",
-		"time": 1601061637056
+		"hash": "A66B21B133707F25CDB171095772FF36",
+		"time": 1601061637056,
+		"products": [
+			{
+				"id": "9",
+				"name": "Tablet"
+			},
+			{
+				"id": "10",
+				"name": "Notebook"
+			}
+		]
 	},
 	{
-		"id": "10",
-		"product": "Notebook",
-		"time": 1601148192980
+		"hash": "4518A99F839B3F3DF74FE72B07E0FCBA",
+		"time": 1601061637057,
+		"products": [
+			{
+				"id": "11",
+				"name": "Tablet"
+			},
+			{
+				"id": "12",
+				"name": "Notebook"
+			}
+		]
 	}
 ]
