@@ -1,13 +1,15 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const server = require('../src/server.js');
-const route = require('../src/routes/routes.js');
+const server = require('../src/server');
+const route = require('../src/routes/routes');
 
 const should = chai.should();
 
 chai.use(chaiHttp);
 
 describe('routes', function(){
+
+    var urlProduct = "/products";
 
     var newProduct = {
         id: 123,
@@ -17,7 +19,8 @@ describe('routes', function(){
     it('Add new product', function(done){
 
         chai.request(server)
-            .post('/products/')
+            .post(urlProduct)
+            .set('content-type', 'application/json')
             .send(newProduct)
             .end(function(err, res){
 
@@ -29,7 +32,8 @@ describe('routes', function(){
    it('Add the same product before 10mins', function(done){
 
         chai.request(server)
-            .post('/products/')
+            .post(urlProduct)
+            .set('content-type', 'application/json')
             .send(newProduct)
             .end(function(err, res){
 
@@ -41,7 +45,7 @@ describe('routes', function(){
     it('Get all registers', function(done){
 
         chai.request(server)
-            .get('/products/')
+            .get(urlProduct)
             .end(function(err, res){
 
                 res.should.have.status(200);
