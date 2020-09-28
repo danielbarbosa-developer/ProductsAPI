@@ -44,7 +44,7 @@ describe('routes', function(){
             .send(newProducts)
             .end(function(err, res){
 
-                res.should.have.status(404);
+                res.should.have.status(403);
                 done();
             });
     });
@@ -62,7 +62,18 @@ describe('routes', function(){
             });
         
     });
+    it('Delete by hash', function(done){
+
+        chai.request(server)
+            .delete(urlProduct)
+            .send(newProducts)
+            .end(function(err, res){
+
+                res.should.have.status(200)
+                done();
+            })
+    });
 
 
-})
+});
 

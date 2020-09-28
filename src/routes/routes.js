@@ -13,12 +13,19 @@ const router = (app)=>{
         res.status(200).send({products});
     });
 
-    app.delete('/products/:id?', (req, res)=>{
+    app.delete('/products/', (req, res)=>{
         const products = productsRepository.getProducts();
+        var hashArray = md5(JSON.stringify(req.body).toLowerCase());
+        try{
+            productsRepository.saveProduct(products.filter(products=> products.hash !== hashArray));
 
-        productsRepository.saveProduct(products.filter(products=> products.id !== req.params.id));
-
-        res.status(200).send("OK");
+            res.status(200).send("OK");
+        }
+        catch(err){
+            console.log(err);
+            res.status(400).send("BAD_REQUEST");
+        }
+       
 
     });
 
@@ -36,25 +43,9 @@ const router = (app)=>{
             res.status(201).send("CREATED");
         }
         else{
-            res.status(404).send("METHOD_NOT_ALLOWED");
+            res.status(403).send("FORBIDDEN");
         }
     })
-
-    app.put('/products/:id?',(req, res)=>{
-        const products = productsRepository.getProducts();
-
-        productsRepository.saveProduct(products.map(products=>{
-            if (products.id === req.params.id){
-                return{
-                    ...products,
-                    ...req.body
-                }
-            }
-            return products
-        }));
-        res.status(200).send("OK");
-
-    });
 
 }
 
