@@ -1,7 +1,7 @@
 # ProductsAPI
 
 API desenvolvida como parte de um desafio técnico. Esta API recebe o cadastro e atualização de produtos. 
-Alguns clientes costumam enviar requests com mesmo corpo repetidas vezes ao longo de um curto espaço de tempo, assim a API foi desenvolvida para negar requisições que tem o mesmo corpo num intervalo de 10 minutos. Também possui um mecanismo de proteção impondo um rate-limit a cada IP que acessa o serviço.
+Alguns clientes costumam enviar requests com mesmo corpo repetidas vezes ao longo de um curto espaço de tempo, assim a API foi desenvolvida para negar requisições que tem o mesmo corpo num intervalo de 10 minutos. Também possui um mecanismo de proteção impondo um limite de requisições por IP durante um intervalo de tempo.
 
 ## Instalando a aplicação
 
@@ -38,14 +38,14 @@ Agora requisições http poderão feitas através da porta exibida no terminal.
 
 ## Alguns recursos utilizados no processo de desenvolvimento
 
--Visual Studio Code August 2020 (version 1.49)
+- Visual Studio Code August 2020 (version 1.49)
 - Node.js
 - Express.js
 - Mocha
 - JavaScript
-- Orientação a Objetos
+- Programação Orientada a Objeto
 - Git e controle de versão
-
+- Testes Automatizados
 
 
 
