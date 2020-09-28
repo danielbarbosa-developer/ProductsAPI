@@ -22,7 +22,18 @@ describe('routes', function(){
         }
     ];
 
-    it('Add new product', function(done){
+    var anotherProducts = [
+        {
+            "id": "65",
+            "name": "Papel"
+        }, 
+        {
+            "id": "80",
+            "name": "Monitor LCD"
+        }
+    ];
+
+    it('Add new products', function(done){
 
         chai.request(server)
             .post(urlProduct)
@@ -36,7 +47,7 @@ describe('routes', function(){
 
     });
 
-   it('Add the same product before 10mins', function(done){
+   it('Add the same products before 10 minutes', function(done){
 
         chai.request(server)
             .post(urlProduct)
@@ -48,6 +59,21 @@ describe('routes', function(){
                 done();
             });
     });
+
+    it('Add another products that are not equal the last request', function(done){
+
+        chai.request(server)
+            .post(urlProduct)
+            .set('content-type', 'application/json')
+            .send(anotherProducts)
+            .end(function(err, res){
+
+                res.should.have.status(201);
+                done();
+            });
+    });
+
+
 
     it('Get all registers', function(done){
 
@@ -62,7 +88,7 @@ describe('routes', function(){
             });
         
     });
-    it('Delete by hash', function(done){
+    it('Delete by hash the first POST (add new product)', function(done){
 
         chai.request(server)
             .delete(urlProduct)
@@ -73,6 +99,22 @@ describe('routes', function(){
                 done();
             })
     });
+
+    it('Delete by hash the last POST (Add another products)', function(done){
+
+        chai.request(server)
+            .delete(urlProduct)
+            .send(anotherProducts)
+            .end(function(err, res){
+
+                res.should.have.status(200)
+                done();
+            })
+    });
+
+    
+
+
 
 
 });
