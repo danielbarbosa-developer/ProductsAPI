@@ -34,7 +34,7 @@ Isso executará o arquivo javascript principal da API. Uma mensagem como essa de
 ProductsAPI/src$ node server.js
 Listening on port: 3000
 ```
-Agora requisições http poderão feitas através da porta exibida no terminal.
+Agora requisições http poderão ser feitas através da porta exibida no terminal.
 
 ## Alguns recursos utilizados no processo de desenvolvimento
 
@@ -42,6 +42,7 @@ Agora requisições http poderão feitas através da porta exibida no terminal.
 - Node.js
 - Express.js
 - Mocha
+- Chai
 - JavaScript
 - Programação Orientada a Objeto
 - Git e controle de versão
